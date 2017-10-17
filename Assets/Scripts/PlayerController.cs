@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
@@ -24,6 +25,17 @@ public class PlayerController : MonoBehaviour {
 
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 		rb.AddForce (movement * speedModifier);
+
+		if (this.transform.position.y < -5) {
+
+			countText.text = "Game Over";
+			StartCoroutine(WaitTime());
+		}
+	}
+
+	IEnumerator WaitTime() {
+		yield return new WaitForSeconds(2.0f);
+		SceneManager.LoadScene("MiniGame");
 	}
 
 	void OnTriggerEnter(Collider other) {
