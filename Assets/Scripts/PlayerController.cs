@@ -29,13 +29,9 @@ public class PlayerController : MonoBehaviour {
 		if (this.transform.position.y < -5) {
 
 			countText.text = "Game Over";
-			StartCoroutine(WaitTime());
-		}
-	}
-
-	IEnumerator WaitTime() {
-		yield return new WaitForSeconds(2.0f);
-		SceneManager.LoadScene("MiniGame");
+			StartCoroutine(RestartScene());
+		} 
+		
 	}
 
 	void OnTriggerEnter(Collider other) {
@@ -45,6 +41,15 @@ public class PlayerController : MonoBehaviour {
 			other.gameObject.SetActive (false);
 			count++;
 			countText.text = "Count: " + count.ToString ();
+		} else if (other.gameObject.CompareTag("Gate")) {
+
+			countText.text = "Victory!";
+			StartCoroutine(RestartScene());
 		}
+	}
+
+	IEnumerator RestartScene() {
+		yield return new WaitForSeconds(2.0f);
+		SceneManager.LoadScene("MiniGame");
 	}
 }
