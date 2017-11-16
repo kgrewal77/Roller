@@ -10,7 +10,9 @@ public class TextController : MonoBehaviour {
 	private TextMesh txt;
 	public bool IsStart;
 	public bool IsQuit;
-	public bool IsAbout;
+	public bool IsHelp;
+    public bool IsBack;
+    public GameObject menuCamera;
 
 	void Start(){
 		txt = gameObject.GetComponent<TextMesh>();
@@ -35,8 +37,12 @@ public class TextController : MonoBehaviour {
          } else if (IsQuit) {
 
          	Application.Quit();
- 		} else if (IsAbout) {
+ 		} else if (IsHelp) {
 
- 		}
+            menuCamera.transform.position = menuCamera.transform.position + new Vector3(200,0,0);
+ 		} else if (IsBack) {
+
+            menuCamera.transform.position = menuCamera.transform.position - new Vector3(200,0,0);
+        }
      }
 }
