@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System;
+using System.Globalization;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,12 +8,18 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
+	public GameObject FloorTile;
 	private Rigidbody rb;
 	private int count;
 	public float speedModifier;
 	public Text countText;
 	private int levelCount;
 	private int maxLevels;
+	private int intervalPosition;
+	public int intervalSize;
+	private GameObject currentInterval;
+	private GameObject lastInterval;
+	
 
 	void Start () {
 
@@ -20,6 +28,10 @@ public class PlayerController : MonoBehaviour {
 		countText.text = "Count: " + count.ToString ();
 		levelCount = 1;
 		maxLevels = 1;
+		
+		intervalPosition = 0;
+		generateInterval();
+
 	}
 
 	void Update() {
@@ -43,7 +55,13 @@ public class PlayerController : MonoBehaviour {
 			countText.text = "Game Over";
 			StartCoroutine(SleepThenLoadScene("Level"+levelCount));
 		} 
-		
+
+		if (this.transform.position.z > intervalPosition) {
+
+			intervalPosition += intervalSize;
+			generateInterval();
+
+		}
 	}
 
 	void OnTriggerEnter(Collider other) {
@@ -70,5 +88,13 @@ public class PlayerController : MonoBehaviour {
 	IEnumerator SleepThenLoadScene(string sceneName) {
 		yield return new WaitForSeconds(1.0f);
 		SceneManager.LoadScene(sceneName);
+	}
+
+	void generateInterval() {
+
+		Destroy(lastInterval);
+		lastInterval = currentInterval;
+		currentInterval = Instantiate(FloorTile, new Vector3(0, 0, intervalPosition), Quaternion.identity);
+		print(currentInterval.GetComponent<Renderer>().bounds);
 	}
 }
