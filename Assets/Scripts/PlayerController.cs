@@ -8,18 +8,21 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
-	public GameObject FloorTile;
+	public GameObject[] possibleTiles;
+	public Queue tileQueue;
+	public int startingTiles;
 	private Rigidbody rb;
 	private int count;
 	public float speedModifier;
 	public Text countText;
 	private int levelCount;
 	private int maxLevels;
-	private int intervalPosition;
-	public int intervalSize;
-	private GameObject currentInterval;
-	private GameObject lastInterval;
-	
+	private int tilePosition;
+	private int tileTrigger;
+	public int tileSize;
+	private System.Random tileChooser;
+	private int numTiles;
+
 
 	void Start () {
 
@@ -28,9 +31,19 @@ public class PlayerController : MonoBehaviour {
 		countText.text = "Count: " + count.ToString ();
 		levelCount = 1;
 		maxLevels = 1;
-		
-		intervalPosition = 0;
-		generateInterval();
+		tileChooser = new System.Random();
+		numTiles = possibleTiles.Length;
+		tileQueue = new Queue();
+
+		tilePosition = 0;
+		generateStartingTile();
+		tileTrigger = tileSize;
+
+		for (int i = 1; i < startingTiles; i++) {
+
+			tilePosition += tileSize;
+			generateTile();
+		}
 
 	}
 
@@ -54,26 +67,27 @@ public class PlayerController : MonoBehaviour {
 
 			countText.text = "Game Over";
 			StartCoroutine(SleepThenLoadScene("Level"+levelCount));
-		} 
+		}
 
-		if (this.transform.position.z > intervalPosition) {
+		if (this.transform.position.z > tileTrigger) {
 
-			intervalPosition += intervalSize;
-			generateInterval();
+			tilePosition += tileSize;
+			tileTrigger += tileSize;
+			generateTile();
 
 		}
 	}
 
 	void OnTriggerEnter(Collider other) {
 
-		if (other.gameObject.CompareTag("PickUp")) {	
+		if (other.gameObject.CompareTag("PickUp")) {
 
 			other.gameObject.SetActive (false);
 			count++;
 			countText.text = "Count: " + count.ToString ();
 		} else if (other.gameObject.CompareTag("Gate")) {
 
-			
+
 			if (levelCount >= maxLevels) {
 				countText.text = "Game Completed!";
 				StartCoroutine(SleepThenLoadScene("Main Menu"));
@@ -90,11 +104,21 @@ public class PlayerController : MonoBehaviour {
 		SceneManager.LoadScene(sceneName);
 	}
 
-	void generateInterval() {
+	void generateTile() {
 
-		Destroy(lastInterval);
-		lastInterval = currentInterval;
-		currentInterval = Instantiate(FloorTile, new Vector3(0, 0, intervalPosition), Quaternion.identity);
-		print(currentInterval.GetComponent<Renderer>().bounds);
+		int tileChoice = tileChooser.Next() % numTiles;
+		GameObject nextTile = possibleTiles[tileChoice];
+		tileQueue.Enqueue(Instantiate(nextTile, new Vector3(0, 0, tilePosition), Quaternion.identity));
+
+		if (tileQueue.Count > startingTiles + 2) {
+
+			UnityEngine.Object.Destroy((GameObject)tileQueue.Dequeue());
+		}
+	}
+
+	void generateStartingTile() {
+
+		tileQueue.Enqueue(Instantiate(possibleTiles[0],
+			new Vector3(0, 0, tilePosition), Quaternion.identity));
 	}
 }

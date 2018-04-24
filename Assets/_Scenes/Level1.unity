@@ -202,10 +202,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b77f0825901fcc46864294877bade77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FloorTile: {fileID: 1929700046821640, guid: 0170f6a6f56ac8040bbbacb1ad1f99e9, type: 2}
+  possibleTiles:
+  - {fileID: 1929700046821640, guid: 0170f6a6f56ac8040bbbacb1ad1f99e9, type: 2}
+  - {fileID: 1429197071338094, guid: 156b852a1985ac94a853466dfea947a3, type: 2}
+  startingTiles: 5
   speedModifier: 10
   countText: {fileID: 1641033235}
-  intervalSize: 10
+  tileSize: 10
 --- !u!54 &832994850
 Rigidbody:
   m_ObjectHideFlags: 0
